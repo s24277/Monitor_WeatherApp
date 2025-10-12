@@ -1,0 +1,34 @@
+# Systemowe pliki tymczasowe
+.DS_Store
+Thumbs.db
+
+# Edytory i IDE
+.vscode/
+.idea/
+
+# Logi i pliki tymczasowe
+*.log
+*.tmp
+*.swp
+*.bak
+*.old
+
+# Foldery tymczasowe
+node_modules/
+dist/
+build/
+
+# Środowisko
+.env
+
+# Multimedia duże
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.png
+
+# Folder na multimedia
+/media/*
+!/media/.gitkeep
