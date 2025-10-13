@@ -4,52 +4,57 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prognoza pogody</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 </head>
-<body class="bg-cover bg-center" style="background-image: url('weatherman.png');">
+<body>
 
-  <div class="grid grid-cols-5 grid-rows-7 h-screen w-screen gap-1">
-    
-    <!-- city input -->
-    <div class="row-start-1 row-end-2 col-start-1 col-end-6 flex items-center justify-center gap-4 p-2">
-     <button class="city-btn bg-blue-500 text-white font-semibold rounded-1g px-4 py-2 hover:bg-blue-600 transition" data-city="Warszawa">Warszawa</button>
-     <button class="city-btn bg-blue-500 text-white font-semibold rounded-1g px-4 py-2 hover:bg-blue-600 transition" data-city="Gdańsk">Gdańsk</button>
-     <button class="city-btn bg-blue-500 text-white font-semibold rounded-1g px-4 py-2 hover:bg-blue-600 transition" data-city="Kraków">Kraków</button>
-     <button class="city-btn bg-blue-500 text-white font-semibold rounded-1g px-4 py-2 hover:bg-blue-600 transition" data-city="Wrocław">Wrocław</button>
-     <button class="city-btn bg-blue-500 text-white font-semibold rounded-1g px-4 py-2 hover:bg-blue-600 transition" data-city="Poznań">Poznań</button>
+  <div class="grid h-screen w-screen gap-1 grid-cols-7 grid-rows-6">
+    <!-- Logo -->
+<div class="col-start-1 col-end-3 row-start-1 row-end-2 p-1">
+  <img src="logo.png" alt="Logo" class="w-full h-full object-contain object-left-top">
+</div>
+    <!-- Map Placeholder -->
+      <div id="map" class="col-start-3 col-end-8 row-start-2 row-end-5 w-full h-full bg-blue-200 border-2 border-dashed border-blue-500">
+  <p class="text-center text-blue-700 p-4">Map(WIP)</p>
+</div>
+    <!-- City Input Buttons -->
+    <div id="btns" class="col-start-3 col-end-8 row-start-1 row-end-2 flex items-center justify-center gap-4 p-2">
+      <button class="city-btn" data-city="Warszawa">Warszawa</button>
+      <button class="city-btn" data-city="Gdańsk">Gdańsk</button>
+      <button class="city-btn" data-city="Kraków">Kraków</button>
+      <button class="city-btn" data-city="Wrocław">Wrocław</button>
+      <button class="city-btn" data-city="Poznań">Poznań</button>
     </div>
-
-    <!-- current data panel -->
-    <div id="current-panel" class="row-start-2 row-end-3 col-start-1 col-end-2 bg-blue-200 flex flex-col items-center justify-center rounded-xl shadow p-2 text-blue-900 font-semibold">
+    <!-- Current Data Panel -->
+    <div id="current-panel" class="col-start-1 col-end-3 row-start-3 row-end-4 flex flex-col items-center justify-center rounded-xl shadow p-2 font-semibold">
       <p class="text-lg">Aktualnie</p>
       <p id="location-name" class="text-xl mt-1">--</p>
       <p id="current-temp" class="text-2xl mt-2">--°C</p>
       <p id="current-desc" class="text-md mt-1">--</p>
     </div>
-
-    <!-- panels: today, tomorrow, day after tomorrow -->
-    <div class="row-start-4 row-end-5 col-start-1 col-end-6 flex items-center justify-center gap-4">
-      <div class="bg-yellow-200 rounded-xl shadow-lg w-1/5 h-3/4 flex flex-col items-center justify-center p-2">
-        <p class="font-semibold text-gray-700">Dziś</p>
-        <p id="avg-today" class="text-2xl font-bold text-blue-600">--°C</p>
-        <p id="desc-today" class="text-sm text-gray-600">--</p>
-      </div>
-      <div class="bg-yellow-200 rounded-xl shadow-lg w-1/5 h-3/4 flex flex-col items-center justify-center p-2">
-        <p class="font-semibold text-gray-700">Jutro</p>
-        <p id="avg-tomorrow" class="text-2xl font-bold text-blue-600">--°C</p>
-        <p id="desc-tomorrow" class="text-sm text-gray-600">--</p>
-      </div>
-      <div class="bg-yellow-200 rounded-xl shadow-lg w-1/5 h-3/4 flex flex-col items-center justify-center p-2">
-        <p class="font-semibold text-gray-700">Pojutrze</p>
-        <p id="avg-dayafter" class="text-2xl font-bold text-blue-600">--°C</p>
-        <p id="desc-dayafter" class="text-sm text-gray-600">--</p>
-      </div>
-    </div>
-
-    <!-- chart -->
-    <div class="row-start-5 row-end-7 col-start-1 col-end-6 flex items-center justify-center">
+    <!-- Weather Panels -->
+<div class="col-start-1 col-end-3 row-start-4 row-end-5 flex w-full h-full gap-1 p-1">
+  <div class="panel-today flex-1 flex flex-col items-center justify-center bg-white rounded-lg shadow p-2">
+    <p class="font-semibold">Dziś</p>
+    <p id="avg-today" class="text-2xl font-bold">--°C</p>
+    <p id="desc-today" class="text-sm">--</p>
+  </div>
+  <div class="panel-tomorrow flex-1 flex flex-col items-center justify-center bg-white rounded-lg shadow p-2">
+    <p class="font-semibold">Jutro</p>
+    <p id="avg-tomorrow" class="text-2xl font-bold">--°C</p>
+    <p id="desc-tomorrow" class="text-sm">--</p>
+  </div>
+  <div class="panel-after-tomorrow flex-1 flex flex-col items-center justify-center bg-white rounded-lg shadow p-2">
+    <p class="font-semibold">Pojutrze</p>
+    <p id="avg-dayafter" class="text-2xl font-bold">--°C</p>
+    <p id="desc-dayafter" class="text-sm">--</p>
+  </div>
+</div>
+    <!-- Chart -->
+    <div class="col-start-1 col-end-8 row-start-5 row-end-7 flex items-center justify-center">
       <div class="bg-white rounded-xl shadow-lg w-full h-full p-2">
         <canvas id="myChart" class="w-full h-full"></canvas>
       </div>
