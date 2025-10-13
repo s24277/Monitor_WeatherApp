@@ -13,9 +13,12 @@
   <div class="grid grid-cols-5 grid-rows-7 h-screen w-screen gap-1">
     
     <!-- city input -->
-    <div class="row-start-1 row-end-2 col-start-1 col-end-6 flex items-center justify-center gap-2 p-2">
-      <input id="city-input" type="text" placeholder="Wpisz miasto" class="border rounded p-1 w-1/4">
-      <button id="city-btn" class="bg-blue-500 text-white rounded px-2 py-1">Pokaż pogodę</button>
+    <div class="row-start-1 row-end-2 col-start-1 col-end-6 flex items-center justify-center gap-4 p-2">
+     <button class="city-btn bg-blue-500 text-white font-semibold rounded-1g px-4 py-2 hover:bg-blue-600 transition" data-city="Warszawa">Warszawa</button>
+     <button class="city-btn bg-blue-500 text-white font-semibold rounded-1g px-4 py-2 hover:bg-blue-600 transition" data-city="Gdańsk">Gdańsk</button>
+     <button class="city-btn bg-blue-500 text-white font-semibold rounded-1g px-4 py-2 hover:bg-blue-600 transition" data-city="Kraków">Kraków</button>
+     <button class="city-btn bg-blue-500 text-white font-semibold rounded-1g px-4 py-2 hover:bg-blue-600 transition" data-city="Wrocław">Wrocław</button>
+     <button class="city-btn bg-blue-500 text-white font-semibold rounded-1g px-4 py-2 hover:bg-blue-600 transition" data-city="Poznań">Poznań</button>
     </div>
 
     <!-- current data panel -->
@@ -54,13 +57,14 @@
   </div>
 
 <script>
-const ctx = document.getElementById('myChart');
+const ctx = document.getElementById('myChart').getContext('2d');
 const avgTodayEl = document.getElementById('avg-today');
 const avgTomorrowEl = document.getElementById('avg-tomorrow');
 const avgDayAfterEl = document.getElementById('avg-dayafter');
 const currentTempEl = document.getElementById('current-temp');
 const currentDescEl = document.getElementById('current-desc');
 const locationNameEl = document.getElementById('location-name');
+let myChart;
 
 // map of cities in Poland
 const polishCities = {
@@ -87,7 +91,7 @@ const weatherDescriptions = {
   95: "Burze ⛈️"
 };
 
-// function to fetch and draw weather
+// function to fetch and draw weather chart
 function fetchWeather(lat, lon, cityName) {
   locationNameEl.textContent = cityName;
 
@@ -139,7 +143,12 @@ function fetchWeather(lat, lon, cityName) {
       const hours = times.slice(0, 24).map(t => t.getHours());
       const chartTemps = temps.slice(0, 24);
 
-      new Chart(ctx, {
+      if (myChart) {
+        myChart.destroy(); 
+      }
+
+    
+      myChart = new Chart(ctx, {
         type: "line",
         data: {
           labels: hours,
@@ -186,20 +195,19 @@ function fetchWeather(lat, lon, cityName) {
     .catch(err => console.error("Błąd pobierania danych:", err));
 }
 
-// button for city
-document.getElementById('city-btn').addEventListener('click', () => {
-  const city = document.getElementById('city-input').value.trim();
-  if (polishCities[city]) {
-    const coords = polishCities[city];
-    fetchWeather(coords.lat, coords.lon, city);
-  } else {
-    alert("Nie znaleziono miasta w Polsce.");
-  }
+
+
+// buttons for city
+document.querySelectorAll('.city-btn').forEach(btn => {
+btn.addEventListener('click', () => {
+  const city = btn.dataset.city;
+  const coords = polishCities[city];
+  fetchWeather(coords.lat, coords.lon, city);
+});
 });
 
-// default: Warsaw
-fetchWeather(52.23, 21.01, "Warszawa");
-
+//Default
+fetchWeather(polishCities["Gdańsk"].lat, polishCities["Gdańsk"].lon, "Gdańsk");
 
 </script>
 </body>
