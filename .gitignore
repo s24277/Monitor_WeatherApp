@@ -32,3 +32,5 @@ build/
 # Folder na multimedia
 /media/*
 !/media/.gitkeep
+
+config.js
