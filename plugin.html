@@ -20,16 +20,20 @@
 </div>
     <!-- Map Container -->
 <div id="map" class="col-start-3 col-end-8 row-start-2 row-end-5 w-full h-full rounded-lg overflow-hidden"></div>
-<div class="absolute top-4 right-4 bg-white rounded-lg shadow p-2 space-x-2 z-10">
-  <button class="weather-layer-btn" data-type="temp_new">🌡️ Temp</button>
-  <button class="weather-layer-btn" data-type="precipitation_new">🌧️ Opady</button>
-  <button class="weather-layer-btn" data-type="clouds_new">☁️ Chmury</button>
-  <button class="weather-layer-btn" data-type="wind_new">💨 Wiatr</button>
-</div>
+
+    <!-- Weather buttons (right) -->
+    <div class="col-start-6 col-end-8 row-start-1 row-end-2 flex items-center justify-end p-2">
+      <div class="bg-white rounded-lg shadow p-2 space-x-2">
+        <button class="weather-layer-btn city-btn" data-type="temp_new">🌡️ Temp</button>
+        <button class="weather-layer-btn city-btn" data-type="precipitation_new">🌧️ Opady</button>
+        <button class="weather-layer-btn city-btn" data-type="clouds_new">☁️ Chmury</button>
+        <button class="weather-layer-btn city-btn" data-type="wind_new">💨 Wiatr</button>
+      </div>
+    </div>
 
 
     <!-- City Input Buttons -->
-    <div id="btns" class="col-start-3 col-end-8 row-start-1 row-end-2 flex items-center justify-center gap-4 p-2">
+    <div id="btns" class="col-start-3 col-end-6 row-start-1 row-end-2 flex items-center justify-center gap-4 p-2">
       <button class="city-btn" data-city="Warszawa">Warszawa</button>
       <button class="city-btn" data-city="Gdańsk">Gdańsk</button>
       <button class="city-btn" data-city="Kraków">Kraków</button>
