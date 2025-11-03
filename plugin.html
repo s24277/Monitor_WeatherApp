@@ -13,7 +13,6 @@
 <script src="https://unpkg.com/maplibre-gl@3.3.1/dist/maplibre-gl.js"></script>
 </head>
 <body>
-
   <div class="grid h-screen w-screen gap-1 grid-cols-7 grid-rows-6">
     <!-- Logo -->
 <div class="col-start-1 col-end-3 row-start-1 row-end-2 p-1">
@@ -22,9 +21,10 @@
     <!-- Map Container -->
 <div id="map" class="col-start-3 col-end-8 row-start-2 row-end-5 w-full h-full rounded-lg overflow-hidden"></div>
 <div class="absolute top-4 right-4 bg-white rounded-lg shadow p-2 space-x-2 z-10">
-  <button class="weather-layer-btn" data-type="temperature/2m">🌡️ Temp</button>
-  <button class="weather-layer-btn" data-type="precipitation/rate">🌧️ Opady</button>
-  <button class="weather-layer-btn" data-type="clouds">☁️ Chmury</button>
+  <button class="weather-layer-btn" data-type="temp_new">🌡️ Temp</button>
+  <button class="weather-layer-btn" data-type="precipitation_new">🌧️ Opady</button>
+  <button class="weather-layer-btn" data-type="clouds_new">☁️ Chmury</button>
+  <button class="weather-layer-btn" data-type="wind_new">💨 Wiatr</button>
 </div>
 
 
@@ -89,29 +89,33 @@ const polishCities = {
   "Poznań": { lat: 52.41, lon: 16.93 }
 };
 
-// ===== MapTiler setup =====
-const maptilerKey = CONFIG.MAPTILER_KEY;
-
 // Default city (Gdańsk)
 const currentCity = { lat: 54.35, lon: 18.65 };
 
-// Initialize MapLibre
+// MapTiler key from config (do NOT inline)
+const maptilerKey = CONFIG.MAPTILER_KEY;
+if (!maptilerKey) console.error('MAPTILER_KEY missing — check config.js');
+else console.log('MAPTILER_KEY ok');
+
+// Initialize MapLibre centered on Gdańsk using MapTiler style
+const mapStyleUrl = `https://api.maptiler.com/maps/streets-v2/style.json?key=${maptilerKey}`;
+console.log('MapTiler style URL:', mapStyleUrl);
 const map = new maplibregl.Map({
   container: "map",
-  style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${maptilerKey}`,
-  center: [currentCity.lon, currentCity.lat],
+  style: mapStyleUrl,
+  center: [18.65, 54.35],
   zoom: 10
 });
 
-// debug: ensure the key is available
-if (!maptilerKey) console.error('MAPTILER_KEY missing — check config.js');
-else console.log('MAPTILER_KEY ok');
+// debug: ensure OpenWeather key is available
+if (!CONFIG.OPENWEATHER_KEY) console.error('OPENWEATHER_KEY missing — check config.js');
+else console.log('OPENWEATHER_KEY ok');
 
 // attach weather layer buttons
 document.querySelectorAll('.weather-layer-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const type = btn.dataset.type;
-    console.log('Dodaję warstwę pogodową:', type);
+    console.log('Adding weather layer:', type);
     addWeatherLayer(type);
   });
 });
@@ -119,43 +123,44 @@ document.querySelectorAll('.weather-layer-btn').forEach(btn => {
 // Add navigation controls
 map.addControl(new maplibregl.NavigationControl());
 
-// On map load add default temperature layer
-map.on('load', () => addWeatherLayer('temperature/2m'));
-
 // Current weather layer
 let currentWeatherLayer = null;
 
 function addWeatherLayer(layerType) {
-  const id = 'weather-' + layerType.replace(/\//g, '-');
+  const id = 'weather-' + layerType;
 
-  // remove previous layer and source if they exist
+  // Remove previous weather layer if it exists
   if (currentWeatherLayer) {
-    if (map.getLayer(currentWeatherLayer)) {
-      map.removeLayer(currentWeatherLayer);
-    }
-    if (map.getSource(currentWeatherLayer)) {
-      map.removeSource(currentWeatherLayer);
-    }
+    if (map.getLayer(currentWeatherLayer)) map.removeLayer(currentWeatherLayer);
+    if (map.getSource(currentWeatherLayer)) map.removeSource(currentWeatherLayer);
   }
 
-  const tilesUrl = `https://api.maptiler.com/maps/weather-v2/tiles/${layerType}/{z}/{x}/{y}.png?key=${maptilerKey}`;
-  console.log('Adding weather tiles:', tilesUrl);
+  // Construct OpenWeather tile URL - exact format from OpenWeather API
+  const tilesUrl = `https://tile.openweathermap.org/map/${layerType}/{z}/{x}/{y}.png?appid=${CONFIG.OPENWEATHER_KEY}`;
+  console.log('Adding weather layer:', layerType, 'tilesUrl:', tilesUrl);
 
   map.addSource(id, {
     type: 'raster',
     tiles: [tilesUrl],
-    tileSize: 256
+    tileSize: 256,
+    attribution: '© OpenWeather'
   });
 
   map.addLayer({
     id,
     type: 'raster',
     source: id,
-    paint: { 'raster-opacity': 0.5 }
+    paint: {
+      'raster-opacity': 0.5
+    }
   });
 
   currentWeatherLayer = id;
 }
+
+// On map load add default temperature layer
+map.on('load', () => addWeatherLayer('temp_new'));
+
 
 // mapping weather codes to description
 const weatherDescriptions = {
