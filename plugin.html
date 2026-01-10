@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,29 +11,23 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
   <script src="config.js"></script>
   <link href="https://unpkg.com/maplibre-gl@3.3.1/dist/maplibre-gl.css" rel="stylesheet" />
-<script src="https://unpkg.com/maplibre-gl@3.3.1/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/maplibre-gl@3.3.1/dist/maplibre-gl.js"></script>
 </head>
+
 <body>
   <div class="grid h-screen w-screen gap-1 grid-cols-9 grid-rows-6">
-    <!-- Logo -->
-<div class="col-start-1 col-end-3 row-start-1 row-end-2 p-1">
-  <img src="logo.png" alt="Logo" class="w-full h-full object-contain object-left-top">
-</div>
-    <!-- Map Container -->
-<div id="map" class="col-start-4 col-end-10 row-start-2 row-end-5 w-full h-full rounded-lg overflow-hidden"></div>
-
-    <!-- Weather buttons (right) -->
-   <div class="col-start-7 col-end-10 row-start-1 row-end-2 flex items-center justify-end p-2">
-       <div class="bg-white rounded-lg shadow p-2 space-x-2">
+    <div class="col-start-1 col-end-3 row-start-1 row-end-2 p-1">
+      <img src="logo.png" alt="Logo" class="w-full h-full object-contain object-left-top">
+    </div>
+    <div id="map" class="col-start-4 col-end-10 row-start-2 row-end-5 w-full h-full rounded-lg overflow-hidden"></div>
+    <div class="col-start-7 col-end-10 row-start-1 row-end-2 flex items-center justify-end p-2">
+      <div class="bg-white rounded-lg shadow p-2 space-x-2">
         <button class="weather-layer-btn city-btn" data-type="temp_new">🌡️ Temp</button>
         <button class="weather-layer-btn city-btn" data-type="precipitation_new">🌧️ Opady</button>
         <button class="weather-layer-btn city-btn" data-type="clouds_new">☁️ Chmury</button>
         <button class="weather-layer-btn city-btn" data-type="wind_new">💨 Wiatr</button>
       </div>
     </div>
-
-
-    <!-- City Input Buttons -->
     <div id="btns" class="col-start-3 col-end-7 row-start-1 row-end-2 flex items-center justify-center gap-4 p-2">
       <button class="city-btn" data-city="Warszawa">Warszawa</button>
       <button class="city-btn" data-city="Gdańsk">Gdańsk</button>
@@ -40,266 +35,218 @@
       <button class="city-btn" data-city="Wrocław">Wrocław</button>
       <button class="city-btn" data-city="Poznań">Poznań</button>
     </div>
-    <!-- Current Data Panel -->
-    <div id="current-panel" class="col-start-1 col-end-4 row-start-2 row-end-4 flex flex-col items-center justify-center rounded-xl shadow p-2 font-semibold">
+    <div id="current-panel"
+      class="col-start-1 col-end-4 row-start-2 row-end-4 flex flex-col items-center justify-center rounded-xl shadow p-2 font-semibold">
       <p class="text-lg">Aktualnie</p>
       <p id="location-name" class="text-xl mt-1">--</p>
       <p id="current-temp" class="text-2xl mt-2">--°C</p>
       <p id="current-desc" class="text-md mt-1">--</p>
     </div>
-    <!-- Weather Panels -->
-<div class="col-start-1 col-end-4 row-start-4 row-end-5 flex w-full h-full gap-1 p-1">
-    <div class="panel-today flex-1 flex flex-col items-center justify-center bg-white rounded-lg shadow p-2">
-    <p class="font-semibold">Dziś</p>
-    <p id="avg-today" class="text-2xl font-bold">--°C</p>
-    <p id="desc-today" class="text-sm">--</p>
-  </div>
-  <div class="panel-tomorrow flex-1 flex flex-col items-center justify-center bg-white rounded-lg shadow p-2">
-    <p class="font-semibold">Jutro</p>
-    <p id="avg-tomorrow" class="text-2xl font-bold">--°C</p>
-    <p id="desc-tomorrow" class="text-sm">--</p>
-  </div>
- <div class="panel-after-tomorrow flex-1 flex flex-col items-center justify-center bg-white rounded-lg shadow p-2">
-    <p class="font-semibold">Pojutrze</p>
-    <p id="avg-dayafter" class="text-2xl font-bold">--°C</p>
-    <p id="desc-dayafter" class="text-sm">--</p>
-  </div>
-</div>
-    <!-- Chart -->
+    <div class="col-start-1 col-end-4 row-start-4 row-end-5 flex w-full h-full gap-1 p-1">
+      <div class="panel-today flex-1 flex flex-col items-center justify-center bg-white rounded-lg shadow p-2">
+        <p class="font-semibold">Dziś</p>
+        <p id="avg-today" class="text-2xl font-bold">--°C</p>
+        <p id="desc-today" class="text-sm">--</p>
+      </div>
+      <div class="panel-tomorrow flex-1 flex flex-col items-center justify-center bg-white rounded-lg shadow p-2">
+        <p class="font-semibold">Jutro</p>
+        <p id="avg-tomorrow" class="text-2xl font-bold">--°C</p>
+        <p id="desc-tomorrow" class="text-sm">--</p>
+      </div>
+      <div class="panel-after-tomorrow flex-1 flex flex-col items-center justify-center bg-white rounded-lg shadow p-2">
+        <p class="font-semibold">Pojutrze</p>
+        <p id="avg-dayafter" class="text-2xl font-bold">--°C</p>
+        <p id="desc-dayafter" class="text-sm">--</p>
+      </div>
+    </div>
     <div class="col-start-1 col-end-10 row-start-5 row-end-7 flex items-center justify-center">
-  <div class="bg-white rounded-xl shadow-lg w-full h-full p-2">
+      <div class="bg-white rounded-xl shadow-lg w-full h-full p-2">
         <canvas id="myChart" class="w-full h-full"></canvas>
       </div>
     </div>
   </div>
-
-<script>
-
-const ctx = document.getElementById('myChart').getContext('2d');
-const avgTodayEl = document.getElementById('avg-today');
-const avgTomorrowEl = document.getElementById('avg-tomorrow');
-const avgDayAfterEl = document.getElementById('avg-dayafter');
-const currentTempEl = document.getElementById('current-temp');
-const currentDescEl = document.getElementById('current-desc');
-const locationNameEl = document.getElementById('location-name');
-let myChart;
-
-// map of cities in Poland
-const polishCities = {
-  "Warszawa": { lat: 52.23, lon: 21.01 },
-  "Kraków": { lat: 50.06, lon: 19.94 },
-  "Gdańsk": { lat: 54.35, lon: 18.65 },
-  "Wrocław": { lat: 51.11, lon: 17.03 },
-  "Poznań": { lat: 52.41, lon: 16.93 }
-};
-
-// Default city (Gdańsk)
-const currentCity = { lat: 54.35, lon: 18.65 };
-
-// MapTiler key from config (do NOT inline)
-const maptilerKey = CONFIG.MAPTILER_KEY;
-if (!maptilerKey) console.error('MAPTILER_KEY missing — check config.js');
-else console.log('MAPTILER_KEY ok');
-
-// Initialize MapLibre centered on Gdańsk using MapTiler style
-const mapStyleUrl = `https://api.maptiler.com/maps/streets-v2/style.json?key=${maptilerKey}`;
-console.log('MapTiler style URL:', mapStyleUrl);
-const map = new maplibregl.Map({
-  container: "map",
-  style: mapStyleUrl,
-  center: [18.65, 54.35],
-  zoom: 10
-});
-
-// debug: ensure OpenWeather key is available
-if (!CONFIG.OPENWEATHER_KEY) console.error('OPENWEATHER_KEY missing — check config.js');
-else console.log('OPENWEATHER_KEY ok');
-
-// attach weather layer buttons
-document.querySelectorAll('.weather-layer-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const type = btn.dataset.type;
-    console.log('Adding weather layer:', type);
-    addWeatherLayer(type);
-  });
-});
-
-// Add navigation controls
-map.addControl(new maplibregl.NavigationControl());
-
-// Current weather layer
-let currentWeatherLayer = null;
-
-function addWeatherLayer(layerType) {
-  const id = 'weather-' + layerType;
-
-  // Remove previous weather layer if it exists
-  if (currentWeatherLayer) {
-    if (map.getLayer(currentWeatherLayer)) map.removeLayer(currentWeatherLayer);
-    if (map.getSource(currentWeatherLayer)) map.removeSource(currentWeatherLayer);
-  }
-
-  // Construct OpenWeather tile URL - exact format from OpenWeather API
-  const tilesUrl = `https://tile.openweathermap.org/map/${layerType}/{z}/{x}/{y}.png?appid=${CONFIG.OPENWEATHER_KEY}`;
-  console.log('Adding weather layer:', layerType, 'tilesUrl:', tilesUrl);
-
-  map.addSource(id, {
-    type: 'raster',
-    tiles: [tilesUrl],
-    tileSize: 256,
-    attribution: '© OpenWeather'
-  });
-
-  map.addLayer({
-    id,
-    type: 'raster',
-    source: id,
-    paint: {
-      'raster-opacity': 0.5
-    }
-  });
-
-  currentWeatherLayer = id;
-}
-
-// On map load add default temperature layer
-map.on('load', () => addWeatherLayer('temp_new'));
-
-
-// mapping weather codes to description
-const weatherDescriptions = {
-  0: "Słonecznie ☀️",
-  1: "Głównie słonecznie 🌤️",
-  2: "Częściowo pochmurno ⛅",
-  3: "Pochmurno ☁️",
-  45: "Mgła 🌫️",
-  48: "Marznąca mgła ❄️",
-  51: "Mżawka 🌦️",
-  61: "Deszcz 🌧️",
-  63: "Silny deszcz 🌧️",
-  71: "Śnieg ❄️",
-  80: "Przelotne opady 🌦️",
-  95: "Burze ⛈️"
-};
-
-// function to fetch and draw weather chart
-function fetchWeather(lat, lon, cityName) {
-  locationNameEl.textContent = cityName;
-
-  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation,weathercode&timezone=Europe%2FWarsaw`)
-    .then(res => res.json())
-    .then(data => {
-      const times = data.hourly.time.map(t => new Date(t));
-      const temps = data.hourly.temperature_2m;
-      const weatherCodes = data.hourly.weathercode;
-      const now = new Date();
-
-      const dayGroups = {};
-      const weatherGroups = {};
-      times.forEach((time, i) => {
-        const key = time.toISOString().split('T')[0];
-        if (!dayGroups[key]) {
-          dayGroups[key] = [];
-          weatherGroups[key] = [];
+  <script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const avgTodayEl = document.getElementById('avg-today');
+    const avgTomorrowEl = document.getElementById('avg-tomorrow');
+    const avgDayAfterEl = document.getElementById('avg-dayafter');
+    const currentTempEl = document.getElementById('current-temp');
+    const currentDescEl = document.getElementById('current-desc');
+    const locationNameEl = document.getElementById('location-name');
+    let myChart;
+    const polishCities = {
+      "Warszawa": { lat: 52.23, lon: 21.01 },
+      "Kraków": { lat: 50.06, lon: 19.94 },
+      "Gdańsk": { lat: 54.35, lon: 18.65 },
+      "Wrocław": { lat: 51.11, lon: 17.03 },
+      "Poznań": { lat: 52.41, lon: 16.93 }
+    };
+    const currentCity = { lat: 54.35, lon: 18.65 };
+    const maptilerKey = CONFIG.MAPTILER_KEY;
+    if (!maptilerKey) console.error('MAPTILER_KEY missing — check config.js');
+    else console.log('MAPTILER_KEY ok');
+    const mapStyleUrl = `https://api.maptiler.com/maps/streets-v2/style.json?key=${maptilerKey}`;
+    console.log('MapTiler style URL:', mapStyleUrl);
+    const map = new maplibregl.Map({
+      container: "map",
+      style: mapStyleUrl,
+      center: [18.65, 54.35],
+      zoom: 10
+    });
+    if (!CONFIG.OPENWEATHER_KEY) console.error('OPENWEATHER_KEY missing — check config.js');
+    else console.log('OPENWEATHER_KEY ok');
+    document.querySelectorAll('.weather-layer-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const type = btn.dataset.type;
+        console.log('Adding weather layer:', type);
+        addWeatherLayer(type);
+      });
+    });
+    map.addControl(new maplibregl.NavigationControl());
+    let currentWeatherLayer = null;
+    function addWeatherLayer(layerType) {
+      const id = 'weather-' + layerType;
+      if (currentWeatherLayer) {
+        if (map.getLayer(currentWeatherLayer)) map.removeLayer(currentWeatherLayer);
+        if (map.getSource(currentWeatherLayer)) map.removeSource(currentWeatherLayer);
+      }
+      const tilesUrl = `https://tile.openweathermap.org/map/${layerType}/{z}/{x}/{y}.png?appid=${CONFIG.OPENWEATHER_KEY}`;
+      console.log('Adding weather layer:', layerType, 'tilesUrl:', tilesUrl);
+      map.addSource(id, {
+        type: 'raster',
+        tiles: [tilesUrl],
+        tileSize: 256,
+        attribution: '© OpenWeather'
+      });
+      map.addLayer({
+        id,
+        type: 'raster',
+        source: id,
+        paint: {
+          'raster-opacity': 0.5
         }
-        dayGroups[key].push(temps[i]);
-        weatherGroups[key].push(weatherCodes[i]);
       });
+      currentWeatherLayer = id;
+    }
 
-      const days = Object.keys(dayGroups).slice(0, 3);
-      const averages = days.map(day => {
-        const arr = dayGroups[day];
-        return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1);
-      });
+    map.on('load', () => addWeatherLayer('temp_new'));
+    const weatherDescriptions = {
+      0: "Słonecznie ☀️",
+      1: "Głównie słonecznie 🌤️",
+      2: "Częściowo pochmurno ⛅",
+      3: "Pochmurno ☁️",
+      45: "Mgła 🌫️",
+      48: "Marznąca mgła ❄️",
+      51: "Mżawka 🌦️",
+      61: "Deszcz 🌧️",
+      63: "Silny deszcz 🌧️",
+      71: "Śnieg ❄️",
+      80: "Przelotne opady 🌦️",
+      95: "Burze ⛈️"
+    };
 
-      const mode = arr => arr.sort((a,b) =>
-        arr.filter(v => v===a).length - arr.filter(v => v===b).length
-      ).pop();
-
-      const descs = days.map(day => weatherDescriptions[mode(weatherGroups[day])] || "--");
-
-      avgTodayEl.textContent = `${averages[0]}°C`;
-      avgTomorrowEl.textContent = `${averages[1]}°C`;
-      avgDayAfterEl.textContent = `${averages[2]}°C`;
-      document.getElementById('desc-today').textContent = descs[0];
-      document.getElementById('desc-tomorrow').textContent = descs[1];
-      document.getElementById('desc-dayafter').textContent = descs[2];
-
-      const currentIndex = times.findIndex(t => t.getHours() === now.getHours());
-      if (currentIndex !== -1) {
-        currentTempEl.textContent = `${temps[currentIndex].toFixed(1)}°C`;
-        currentDescEl.textContent = weatherDescriptions[weatherCodes[currentIndex]] || "--";
-      }
-
-      const hours = times.slice(0, 24).map(t => t.getHours());
-      const chartTemps = temps.slice(0, 24);
-
-      if (myChart) {
-        myChart.destroy(); 
-      }
-
-    
-      myChart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: hours,
-          datasets: [{
-            label: 'Temperatura (°C)',
-            data: chartTemps,
-            borderColor: "rgba(0,123,255,0.8)",
-            backgroundColor: "rgba(0,123,255,0.1)",
-            pointRadius: 3,
-            borderWidth: 2,
-            fill: true
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            datalabels: {
-              align: 'top',
-              anchor: 'end',
-              color: '#000',
-              font: { weight: 'bold' },
-              formatter: value => value + '°C'
-            },
-            legend: { display: false },
-            title: {
-              display: true,
-              text: `Prognoza temperatury dla ${cityName}`,
-              font: { size: 18 }
+    function fetchWeather(lat, lon, cityName) {
+      locationNameEl.textContent = cityName;
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation,weathercode&timezone=Europe%2FWarsaw`)
+        .then(res => res.json())
+        .then(data => {
+          const times = data.hourly.time.map(t => new Date(t));
+          const temps = data.hourly.temperature_2m;
+          const weatherCodes = data.hourly.weathercode;
+          const now = new Date();
+          const dayGroups = {};
+          const weatherGroups = {};
+          times.forEach((time, i) => {
+            const key = time.toISOString().split('T')[0];
+            if (!dayGroups[key]) {
+              dayGroups[key] = [];
+              weatherGroups[key] = [];
             }
-          },
-          scales: {
-            y: {
-              title: { display: true, text: 'Temperatura (°C)' },
-              suggestedMin: Math.min(...chartTemps) - 2,
-              suggestedMax: Math.max(...chartTemps) + 3
-            },
-            x: { title: { display: true, text: 'Godzina' } }
+            dayGroups[key].push(temps[i]);
+            weatherGroups[key].push(weatherCodes[i]);
+          });
+          const days = Object.keys(dayGroups).slice(0, 3);
+          const averages = days.map(day => {
+            const arr = dayGroups[day];
+            return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1);
+          });
+          const mode = arr => arr.sort((a, b) =>
+            arr.filter(v => v === a).length - arr.filter(v => v === b).length
+          ).pop();
+          const descs = days.map(day => weatherDescriptions[mode(weatherGroups[day])] || "--");
+          avgTodayEl.textContent = `${averages[0]}°C`;
+          avgTomorrowEl.textContent = `${averages[1]}°C`;
+          avgDayAfterEl.textContent = `${averages[2]}°C`;
+          document.getElementById('desc-today').textContent = descs[0];
+          document.getElementById('desc-tomorrow').textContent = descs[1];
+          document.getElementById('desc-dayafter').textContent = descs[2];
+          const currentIndex = times.findIndex(t => t.getHours() === now.getHours());
+          if (currentIndex !== -1) {
+            currentTempEl.textContent = `${temps[currentIndex].toFixed(1)}°C`;
+            currentDescEl.textContent = weatherDescriptions[weatherCodes[currentIndex]] || "--";
           }
-        },
-        plugins: [ChartDataLabels]
+          const hours = times.slice(0, 24).map(t => t.getHours());
+          const chartTemps = temps.slice(0, 24);
+          if (myChart) {
+            myChart.destroy();
+          }
+          myChart = new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: hours,
+              datasets: [{
+                label: 'Temperatura (°C)',
+                data: chartTemps,
+                borderColor: "rgba(0,123,255,0.8)",
+                backgroundColor: "rgba(0,123,255,0.1)",
+                pointRadius: 3,
+                borderWidth: 2,
+                fill: true
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                datalabels: {
+                  align: 'top',
+                  anchor: 'end',
+                  color: '#000',
+                  font: { weight: 'bold' },
+                  formatter: value => value + '°C'
+                },
+                legend: { display: false },
+                title: {
+                  display: true,
+                  text: `Prognoza temperatury dla ${cityName}`,
+                  font: { size: 18 }
+                }
+              },
+              scales: {
+                y: {
+                  title: { display: true, text: 'Temperatura (°C)' },
+                  suggestedMin: Math.min(...chartTemps) - 2,
+                  suggestedMax: Math.max(...chartTemps) + 3
+                },
+                x: { title: { display: true, text: 'Godzina' } }
+              }
+            },
+            plugins: [ChartDataLabels]
+          });
+        })
+        .catch(err => console.error("Błąd pobierania danych:", err));
+    }
+
+    document.querySelectorAll('.city-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const city = btn.dataset.city;
+        const coords = polishCities[city];
+        fetchWeather(coords.lat, coords.lon, city);
       });
-    })
-    .catch(err => console.error("Błąd pobierania danych:", err));
-}
+    });
 
-
-
-// buttons for city
-document.querySelectorAll('.city-btn').forEach(btn => {
-btn.addEventListener('click', () => {
-  const city = btn.dataset.city;
-    const coords = polishCities[city];
-    fetchWeather(coords.lat, coords.lon, city);
-});
-});
-
-//Default
-fetchWeather(polishCities["Gdańsk"].lat, polishCities["Gdańsk"].lon, "Gdańsk");
-
-</script>
+    fetchWeather(polishCities["Gdańsk"].lat, polishCities["Gdańsk"].lon, "Gdańsk");
+  </script>
 </body>
+
 </html>

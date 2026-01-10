@@ -4,7 +4,11 @@ body {
   background-position: center;
 }
 
-.city-btn, #current-panel, .panel-today, .panel-tomorrow, .panel-after-tomorrow {
+.city-btn,
+#current-panel,
+.panel-today,
+.panel-tomorrow,
+.panel-after-tomorrow {
   background-color: #ffffff;
   color: #a3a3a3;
   font-weight: bold;
