@@ -33,7 +33,7 @@
       <button class="city-btn" data-city="Gdańsk">Gdańsk</button>
       <button class="city-btn" data-city="Kraków">Kraków</button>
       <button class="city-btn" data-city="Wrocław">Wrocław</button>
-      <button class="city-btn" data-city="Poznań">Poznań</button>
+
     </div>
     <div id="current-panel"
       class="col-start-1 col-end-4 row-start-2 row-end-4 flex flex-col items-center justify-center rounded-xl shadow p-2 font-semibold">
@@ -78,8 +78,7 @@
       "Warszawa": { lat: 52.23, lon: 21.01 },
       "Kraków": { lat: 50.06, lon: 19.94 },
       "Gdańsk": { lat: 54.35, lon: 18.65 },
-      "Wrocław": { lat: 51.11, lon: 17.03 },
-      "Poznań": { lat: 52.41, lon: 16.93 }
+      "Wrocław": { lat: 51.11, lon: 17.03 }
     };
     const currentCity = { lat: 54.35, lon: 18.65 };
     const maptilerKey = CONFIG.MAPTILER_KEY;
@@ -103,6 +102,44 @@
       });
     });
     map.addControl(new maplibregl.NavigationControl());
+
+    let currentPopup = null;
+
+    map.on('click', (e) => {
+      const lngLat = e.lngLat;
+      const lat = lngLat.lat;
+      const lon = lngLat.lng;
+
+      if (currentPopup) {
+        currentPopup.remove();
+      }
+
+      const locationName = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+
+      fetchWeather(lat, lon, locationName)
+        .then((weatherData) => {
+          const popupContent = `
+        <div class="bg-white rounded-lg shadow-lg p-3 max-w-xs font-sans text-sm">
+          <p class="font-bold text-lg">${locationName}</p>
+          <p class="mt-1">Temperatura: ${weatherData.temp}°C</p>
+          <p>Opis: ${weatherData.description}</p>
+          <p>Wiatr: ${weatherData.wind_speed} m/s</p>
+          <p>Wilgotność: ${weatherData.humidity}%</p>
+        </div>`;
+
+          currentPopup = new maplibregl.Popup()
+            .setLngLat([lon, lat])
+            .setHTML(popupContent)
+            .addTo(map);
+        })
+        .catch((err) => {
+          currentPopup = new maplibregl.Popup()
+            .setLngLat([lon, lat])
+            .setHTML('<div class="bg-red-100 text-red-800 p-2 rounded">Błąd pobierania pogody</div>')
+            .addTo(map);
+        });
+    });
+
     let currentWeatherLayer = null;
     function addWeatherLayer(layerType) {
       const id = 'weather-' + layerType;
@@ -144,10 +181,30 @@
       80: "Przelotne opady 🌦️",
       95: "Burze ⛈️"
     };
+    const weatherTranslations = {
+      "clear sky": "Bezchmurnie ☀️",
+      "few clouds": "Lekkie zachmurzenie 🌤️",
+      "scattered clouds": "Przeważnie pochmurno ⛅",
+      "broken clouds": "Pochmurno ☁️",
+      "overcast clouds": "Zachmurzenie całkowite ☁️",
+      "light rain": "Lekki deszcz 🌧️",
+      "moderate rain": "Umiarkowany deszcz 🌧️",
+      "heavy intensity rain": "Silny deszcz 🌧️",
+      "light snow": "Lekki śnieg ❄️",
+      "snow": "Śnieg ❄️",
+      "heavy snow": "Silny śnieg ❄️",
+      "shower rain": "Przelotne opady 🌦️",
+      "thunderstorm": "Burza ⛈️",
+      "mist": "Mgła 🌫️",
+      "fog": "Mgła 🌫️",
+      "haze": "Zamglenie 🌫️"
+    };
 
     function fetchWeather(lat, lon, cityName) {
+
       locationNameEl.textContent = cityName;
-      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation,weathercode&timezone=Europe%2FWarsaw`)
+
+      return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation,weathercode&timezone=Europe%2FWarsaw`)
         .then(res => res.json())
         .then(data => {
           const times = data.hourly.time.map(t => new Date(t));
@@ -156,6 +213,7 @@
           const now = new Date();
           const dayGroups = {};
           const weatherGroups = {};
+
           times.forEach((time, i) => {
             const key = time.toISOString().split('T')[0];
             if (!dayGroups[key]) {
@@ -165,31 +223,39 @@
             dayGroups[key].push(temps[i]);
             weatherGroups[key].push(weatherCodes[i]);
           });
+
           const days = Object.keys(dayGroups).slice(0, 3);
           const averages = days.map(day => {
             const arr = dayGroups[day];
             return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1);
           });
+
           const mode = arr => arr.sort((a, b) =>
             arr.filter(v => v === a).length - arr.filter(v => v === b).length
           ).pop();
+
           const descs = days.map(day => weatherDescriptions[mode(weatherGroups[day])] || "--");
+
           avgTodayEl.textContent = `${averages[0]}°C`;
           avgTomorrowEl.textContent = `${averages[1]}°C`;
           avgDayAfterEl.textContent = `${averages[2]}°C`;
           document.getElementById('desc-today').textContent = descs[0];
           document.getElementById('desc-tomorrow').textContent = descs[1];
           document.getElementById('desc-dayafter').textContent = descs[2];
+
           const currentIndex = times.findIndex(t => t.getHours() === now.getHours());
           if (currentIndex !== -1) {
             currentTempEl.textContent = `${temps[currentIndex].toFixed(1)}°C`;
             currentDescEl.textContent = weatherDescriptions[weatherCodes[currentIndex]] || "--";
           }
+
           const hours = times.slice(0, 24).map(t => t.getHours());
           const chartTemps = temps.slice(0, 24);
+
           if (myChart) {
             myChart.destroy();
           }
+
           myChart = new Chart(ctx, {
             type: "line",
             data: {
@@ -233,9 +299,50 @@
             },
             plugins: [ChartDataLabels]
           });
+
+          return fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${CONFIG.OPENWEATHER_KEY}&units=metric`)
+            .then(res => {
+              if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+              return res.json();
+            })
+            .then(data => {
+              const temp = data.main.temp;
+              const description = weatherTranslations[data.weather[0].description] || data.weather[0].description;
+              const humidity = data.main.humidity;
+              const windSpeed = data.wind.speed;
+
+              return {
+                temp: temp.toFixed(1),
+                description: description,
+                humidity: humidity,
+                wind_speed: windSpeed
+              };
+            })
+
+            .catch(err => {
+              console.error("Błąd OpenWeatherMap:", err);
+              return {
+                temp: '--',
+                description: 'Błąd',
+                humidity: '--',
+                wind_speed: '--'
+              };
+            });
         })
-        .catch(err => console.error("Błąd pobierania danych:", err));
+        .catch(err => {
+          console.error("Błąd open‑meteo:", err);
+          currentTempEl.textContent = `--°C`;
+          currentDescEl.textContent = `Błąd`;
+          locationNameEl.textContent = cityName;
+          return {
+            temp: '--',
+            description: 'Błąd',
+            humidity: '--',
+            wind_speed: '--'
+          };
+        });
     }
+
 
     document.querySelectorAll('.city-btn').forEach(btn => {
       btn.addEventListener('click', () => {
